@@ -21,18 +21,20 @@
             p.idDaftar,
             ps.nama,
             k.namaKursus,
+            p.tglDaftar,
             p.status
         FROM pendaftaran p
         JOIN peserta ps
-        ON p.idPeserta = ps.idPeserta
+            ON p.idPeserta = ps.idPeserta
         JOIN kursus k
-        ON p.idKursus = k.idKursus
+            ON p.idKursus = k.idKursus
         ]]>
     </queryString>
 
     <field name="idDaftar" class="java.lang.Integer"/>
     <field name="nama" class="java.lang.String"/>
     <field name="namaKursus" class="java.lang.String"/>
+    <field name="tglDaftar" class="java.sql.Date"/>
     <field name="status" class="java.lang.String"/>
 
     <title>
@@ -51,22 +53,27 @@
         <band height="30">
 
             <staticText>
-                <reportElement x="0" y="0" width="70" height="20"/>
+                <reportElement x="0" y="0" width="40" height="20"/>
                 <text><![CDATA[ID]]></text>
             </staticText>
 
             <staticText>
-                <reportElement x="80" y="0" width="150" height="20"/>
+                <reportElement x="50" y="0" width="120" height="20"/>
                 <text><![CDATA[Peserta]]></text>
             </staticText>
 
             <staticText>
-                <reportElement x="240" y="0" width="170" height="20"/>
+                <reportElement x="180" y="0" width="120" height="20"/>
                 <text><![CDATA[Kursus]]></text>
             </staticText>
 
             <staticText>
-                <reportElement x="420" y="0" width="100" height="20"/>
+                <reportElement x="310" y="0" width="110" height="20"/>
+                <text><![CDATA[Tanggal Daftar]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="430" y="0" width="80" height="20"/>
                 <text><![CDATA[Status]]></text>
             </staticText>
 
@@ -77,22 +84,27 @@
         <band height="25">
 
             <textField>
-                <reportElement x="0" y="0" width="70" height="20"/>
+                <reportElement x="0" y="0" width="40" height="20"/>
                 <textFieldExpression><![CDATA[$F{idDaftar}]]></textFieldExpression>
             </textField>
 
             <textField>
-                <reportElement x="80" y="0" width="150" height="20"/>
+                <reportElement x="50" y="0" width="120" height="20"/>
                 <textFieldExpression><![CDATA[$F{nama}]]></textFieldExpression>
             </textField>
 
             <textField>
-                <reportElement x="240" y="0" width="170" height="20"/>
+                <reportElement x="180" y="0" width="120" height="20"/>
                 <textFieldExpression><![CDATA[$F{namaKursus}]]></textFieldExpression>
             </textField>
 
+            <textField pattern="yyyy-MM-dd">
+                <reportElement x="310" y="0" width="110" height="20"/>
+                <textFieldExpression><![CDATA[$F{tglDaftar}]]></textFieldExpression>
+            </textField>
+
             <textField>
-                <reportElement x="420" y="0" width="100" height="20"/>
+                <reportElement x="430" y="0" width="80" height="20"/>
                 <textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
             </textField>
 

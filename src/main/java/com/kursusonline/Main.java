@@ -230,7 +230,6 @@ public class Main {
             System.out.println("Selamat datang, " + nama);
             System.out.println("1. Lihat Semua Kursus");
             System.out.println("2. Kursus Saya");
-            System.out.println("3. Cetak Laporan");
             System.out.println("0. Logout");
             System.out.print("Pilih menu : ");
 
@@ -245,10 +244,6 @@ public class Main {
 
                 case 2:
                     kursusSaya(idUser);
-                    break;
-
-                case 3:
-                    cetakPdf();
                     break;
 
                 case 0:
@@ -322,7 +317,7 @@ public class Main {
                     break;
 
                 case 9:
-                    cetakPdf();
+                    menuLaporan();
                     break;
 
                 case 0:
@@ -337,67 +332,154 @@ public class Main {
         } while (pilih != 0);
 
     }
+    public static void menuLaporan() {
+
+    int pilih;
+
+    do {
+
+        System.out.println("\n=== MENU LAPORAN ===");
+        System.out.println("1. Cetak Laporan Pendaftaran");
+        System.out.println("2. Cetak Laporan Instruktur");
+        System.out.println("0. Kembali");
+        System.out.print("Pilih menu : ");
+
+        pilih = input.nextInt();
+        input.nextLine();
+
+        switch (pilih) {
+
+            case 1:
+                cetakPdf();
+                break;
+
+            case 2:
+                cetakInstrukturPdf();
+                break;
+
+            case 0:
+                break;
+
+            default:
+                System.out.println("Menu tidak tersedia.");
+
+        }
+
+            } while (pilih != 0);
+
+    }
 
     public static void tambahKursus() {
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(
-                     "INSERT INTO kursus (namaKursus, deskripsi, jadwal) VALUES (?, ?, ?)") ) {
 
-            System.out.print("Nama Kursus : ");
-            String nama = input.nextLine();
-            System.out.print("Deskripsi : ");
-            String deskripsi = input.nextLine();
-            System.out.print("Jadwal : ");
-            String jadwal = input.nextLine();
+    try (Connection conn = getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(
+                    "INSERT INTO kursus (namaKursus, deskripsi, jadwal, idInstruktur) VALUES (?, ?, ?, ?)")) {
 
-            pstmt.setString(1, nama);
-            pstmt.setString(2, deskripsi);
-            pstmt.setString(3, jadwal);
+        // Tampilkan daftar instruktur
+        tampilInstruktur();
 
-            int hasil = pstmt.executeUpdate();
+        System.out.print("\nID Instruktur : ");
+        int idInstruktur = input.nextInt();
+        input.nextLine();
 
-            if (hasil > 0) {
-                System.out.println("Kursus berhasil ditambahkan.");
-            } else {
-                System.out.println("Gagal menambahkan kursus.");
-            }
+        System.out.print("Nama Kursus : ");
+        String nama = input.nextLine();
+
+        System.out.print("Deskripsi : ");
+        String deskripsi = input.nextLine();
+
+        System.out.print("Jadwal : ");
+        String jadwal = input.nextLine();
+
+        pstmt.setString(1, nama);
+        pstmt.setString(2, deskripsi);
+        pstmt.setString(3, jadwal);
+        pstmt.setInt(4, idInstruktur);
+
+        int hasil = pstmt.executeUpdate();
+
+        if (hasil > 0) {
+            System.out.println("Kursus berhasil ditambahkan.");
+        } else {
+            System.out.println("Gagal menambahkan kursus.");
+        }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    public static void tampilInstruktur() {
+
+    try {
+
+        Connection conn = getConnection();
+        Statement stmt = conn.createStatement();
+
+        ResultSet rs = stmt.executeQuery(
+                "SELECT idInstruktur, nama, keahlian FROM instruktur");
+
+        System.out.println("\n=== DAFTAR INSTRUKTUR ===");
+
+        while (rs.next()) {
+
+            System.out.println(
+                    rs.getInt("idInstruktur") + " | "
+                            + rs.getString("nama") + " | "
+                            + rs.getString("keahlian"));
+        }
+
+        conn.close();
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        }
+    }
 
     public static void editKursus() {
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(
-                     "UPDATE kursus SET namaKursus = ?, deskripsi = ?, jadwal = ? WHERE idKursus = ?") ) {
 
-            System.out.print("ID Kursus yang akan diubah : ");
-            int idKursus = input.nextInt();
-            input.nextLine();
-            System.out.print("Nama Kursus baru : ");
-            String nama = input.nextLine();
-            System.out.print("Deskripsi baru : ");
-            String deskripsi = input.nextLine();
-            System.out.print("Jadwal baru : ");
-            String jadwal = input.nextLine();
+    try (Connection conn = getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(
+                 "UPDATE kursus SET namaKursus = ?, deskripsi = ?, jadwal = ?, idInstruktur = ? WHERE idKursus = ?")) {
 
-            pstmt.setString(1, nama);
-            pstmt.setString(2, deskripsi);
-            pstmt.setString(3, jadwal);
-            pstmt.setInt(4, idKursus);
+        tampilKursus();
 
-            int hasil = pstmt.executeUpdate();
+        System.out.print("ID Kursus yang akan diubah : ");
+        int idKursus = input.nextInt();
+        input.nextLine();
 
-            if (hasil > 0) {
-                System.out.println("Kursus berhasil diubah.");
-            } else {
-                System.out.println("ID Kursus tidak ditemukan.");
-            }
+        tampilInstruktur();
+
+        System.out.print("ID Instruktur baru : ");
+        int idInstruktur = input.nextInt();
+        input.nextLine();
+
+        System.out.print("Nama Kursus baru : ");
+        String nama = input.nextLine();
+
+        System.out.print("Deskripsi baru : ");
+        String deskripsi = input.nextLine();
+
+        System.out.print("Jadwal baru : ");
+        String jadwal = input.nextLine();
+
+        pstmt.setString(1, nama);
+        pstmt.setString(2, deskripsi);
+        pstmt.setString(3, jadwal);
+        pstmt.setInt(4, idInstruktur);
+        pstmt.setInt(5, idKursus);
+
+        int hasil = pstmt.executeUpdate();
+
+        if (hasil > 0) {
+            System.out.println("Kursus berhasil diubah.");
+        } else {
+            System.out.println("ID Kursus tidak ditemukan.");
+        }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     public static void hapusKursus() {
@@ -476,6 +558,19 @@ public class Main {
             System.out.print("ID Kursus baru untuk materi : ");
             int idKursus = input.nextInt();
             input.nextLine();
+            PreparedStatement cek = conn.prepareStatement(
+                "SELECT * FROM kursus WHERE idKursus = ?");
+            cek.setInt(1, idKursus);
+
+            ResultSet rs = cek.executeQuery();
+
+            if (!rs.next()) {
+                System.out.println("========================================");
+                System.out.println("Maaf, ID Kursus yang Anda masukkan tidak tersedia.");
+                System.out.println("Silakan pilih ID Kursus yang ada.");
+                System.out.println("========================================");
+                return;
+            }
 
             pstmt.setString(1, judul);
             pstmt.setString(2, deskripsi);
@@ -675,6 +770,40 @@ public class Main {
             e.printStackTrace();
 
         }
+
+    }
+    public static void cetakInstrukturPdf() {
+
+    try {
+
+        Connection conn = getConnection();
+
+        JasperReport report =
+                JasperCompileManager.compileReport(
+                        Main.class.getClassLoader()
+                                .getResourceAsStream("laporan_instruktur.jrxml"));
+
+        JasperPrint print =
+                JasperFillManager.fillReport(
+                        report,
+                        null,
+                        conn);
+
+        JasperExportManager.exportReportToPdfFile(
+                print,
+                "laporan_instruktur.pdf");
+
+        System.out.println("\n=== LAPORAN ===");
+        System.out.println("PDF Instruktur berhasil dibuat.");
+        System.out.println("File : laporan_instruktur.pdf");
+
+        conn.close();
+
+    } catch (Exception e) {
+
+        e.printStackTrace();
+
+    }
 
     }
 
