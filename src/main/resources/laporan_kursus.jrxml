@@ -28,6 +28,7 @@
             ON p.idPeserta = ps.idPeserta
         JOIN kursus k
             ON p.idKursus = k.idKursus
+        ORDER BY p.idDaftar ASC
         ]]>
     </queryString>
 
